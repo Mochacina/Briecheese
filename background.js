@@ -10,6 +10,7 @@ const BLOCKED_URLS = [
     "*://adcr.naver.com/*",
     "*veta.naver.com*",
     "*://api.chzzk.naver.com/ad-polling/*",
+    "*/ad-polling/*",
     // 필요시 여기에 더 많은 광고 URL 패턴을 추가할 수 있어! by Helena
 ];
 let isEnabled = true; // Global state
@@ -17,14 +18,25 @@ let isEnabled = true; // Global state
 // --- Debugger Control Functions ---
 
 function applyDebuggerSettings(tabId, shouldEnable) {
-    chrome.debugger.attach({ tabId }, "1.3", () => {
-        if (chrome.runtime.lastError) {
-            console.error(`[Briecheeze] Debugger attach 실패 (탭 ID: ${tabId}):`, chrome.runtime.lastError.message);
+    chrome.debugger.getTargets((targets) => {
+        const target = targets.find(t => t.tabId === tabId);
+
+        // 이미 다른 디버거(예: 개발자 도구)가 연결되어 있으면 조용히 포기
+        if (target && target.attached && !target.extensionId) {
+            console.warn(`[Briecheeze] 개발자 도구 등 다른 디버거가 이미 연결되어 있어 작업을 중단합니다. (탭 ID: ${tabId})`);
             return;
         }
-        console.log(`[Briecheeze] Debugger attached (탭 ID: ${tabId})`);
+        
+        // 우리 확장 프로그램이 아직 연결되지 않았을 때만 연결 시도
+        if (!target || !target.attached) {
+            chrome.debugger.attach({ tabId }, "1.3", () => {
+                if (chrome.runtime.lastError) {
+                    // 이 오류는 이제 위에서 처리되므로, 대부분 발생하지 않음
+                    return;
+                }
+                console.log(`[Briecheeze] Debugger attached (탭 ID: ${tabId})`);
 
-        chrome.debugger.sendCommand({ tabId }, "Network.enable", {}, () => {
+                chrome.debugger.sendCommand({ tabId }, "Network.enable", {}, () => {
             if (chrome.runtime.lastError) {
                 console.error(`[Briecheeze] Network.enable 실패:`, chrome.runtime.lastError.message);
                 detachDebugger(tabId); // 실패 시 detach
@@ -40,8 +52,11 @@ function applyDebuggerSettings(tabId, shouldEnable) {
             console.log(`[Briecheeze] Debugger 설정 적용 완료 (활성화: ${shouldEnable})`);
 
             // User-Agent 변경은 페이지 로드 초기에만 필요하므로, 잠시 후 detach
-            setTimeout(() => detachDebugger(tabId), 5000);
-        });
+                    // User-Agent 변경은 페이지 로드 초기에만 필요하므로, 잠시 후 detach
+                    setTimeout(() => detachDebugger(tabId), 5000);
+                });
+            });
+        }
     });
 }
 

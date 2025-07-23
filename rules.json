@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "*://*.ad.naver.com/*",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest", "media"]
+    }
+  },
+  {
+    "id": 2,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "*://adcr.naver.com/*",
+      "resourceTypes": ["main_frame", "sub_frame", "image", "xmlhttprequest"]
+    }
+  },
+  {
+    "id": 3,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "*://chzzk.naver.com/service/live/p2p/*",
+      "resourceTypes": ["xmlhttprequest", "websocket"]
+    }
+  }
+]

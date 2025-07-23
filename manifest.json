@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "Briecheeze - 치지직 그리드/광고 차단기",
+  "version": "3.0.0",
+  "description": "치지직(Chzzk)의 그리드 딜리버리와 모든 광고를 차단하여 쾌적한 시청 환경을 제공합니다.",
+  "permissions": [
+    "storage",
+    "scripting",
+    "debugger"
+  ],
+  "host_permissions": [
+    "*://*.chzzk.naver.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "images/icon16.png",
+      "48": "images/icon48.png",
+      "128": "images/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "images/icon16.png",
+    "48": "images/icon48.png",
+    "128": "images/icon128.png"
+  }
+}

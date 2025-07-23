@@ -8,9 +8,9 @@ const NEW_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 
 const BLOCKED_URLS = [
     "*://*.ad.naver.com/*",
     "*://adcr.naver.com/*",
-    "*://veta.naver.com/*",
+    "*veta.naver.com*",
     "*://api.chzzk.naver.com/ad-polling/*",
-    // 필요시 여기에 더 많은 광고 URL 패턴을 추가할 수 있어!
+    // 필요시 여기에 더 많은 광고 URL 패턴을 추가할 수 있어! by Helena
 ];
 let isEnabled = true; // Global state
 

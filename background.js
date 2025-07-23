@@ -9,6 +9,7 @@ const BLOCKED_URLS = [
     "*://*.ad.naver.com/*",
     "*://adcr.naver.com/*",
     "*://*.veta.naver.com/*",
+    "*://siape.veta.naver.com/*",
     "*://api.chzzk.naver.com/ad-polling/*",
     "*://*/*ad-polling*",
     // 필요시 여기에 더 많은 광고 URL 패턴을 추가할 수 있어! by Helena
@@ -109,33 +110,27 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 });
 
-chrome.runtime.onStartup.addListener(() => {
-    chrome.storage.local.get({ isEnabled: true }, (data) => {
-        isEnabled = data.isEnabled;
-    });
-});
+// --- State Initialization ---
 
+// 1. On Install: Set default state to enabled
 chrome.runtime.onInstalled.addListener((details) => {
     if (details.reason === 'install') {
+        console.log("[Briecheeze] 확장 프로그램 설치됨. 기본값(활성화)으로 설정합니다.");
         chrome.storage.local.set({ isEnabled: true });
         isEnabled = true;
     }
 });
 
-// Initial load of the state
-chrome.storage.local.get({ isEnabled: true }, (data) => {
-    isEnabled = data.isEnabled;
-});
-chrome.runtime.onInstalled.addListener((details) => {
-    if (details.reason === 'install') {
-        console.log("[Briecheeze] 확장 프로그램 설치됨. 기본값(활성화)으로 설정합니다.");
-        chrome.storage.local.set({ isEnabled: true }, () => {
-            setEnabled(true);
-        });
-    }
+// 2. On Browser Startup: Load state from storage
+chrome.runtime.onStartup.addListener(() => {
+    chrome.storage.local.get({ isEnabled: true }, (data) => {
+        isEnabled = data.isEnabled;
+        console.log(`[Briecheeze] 브라우저 시작 시 상태 로드: ${isEnabled}`);
+    });
 });
 
-// Initial load of the state
+// 3. On Extension Load/Reload: Load state from storage
+// This covers cases like extension updates or manual reloads.
 chrome.storage.local.get({ isEnabled: true }, (data) => {
     isEnabled = data.isEnabled;
 });
